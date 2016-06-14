@@ -6,8 +6,8 @@ It is a angularJs app that is used to book seats for a show or a movie.
 ```
 Download the Repository
 
-1. ``npm install``
-2. ``gulp``
+npm install
+gulp
 ```
 What the User Can Do (User Cases)?
 
