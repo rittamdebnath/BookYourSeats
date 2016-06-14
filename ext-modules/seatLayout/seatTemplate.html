@@ -1,0 +1,20 @@
+<div class="table-responsive">
+    <table class="table" style="width: 664px">
+        <tbody>
+            <tr data-ng-repeat="row in rows" class="row">
+                <td class="SRow1">
+                    <span>{{rowLetter[$index]}}</span>
+                    <div class="itemSeat" data-ng-repeat="item in row">
+                        <a href="#" class="available">{{item.val+ 1}}</a>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<a href="#/quantity">
+    <button class="cta proceed">Go Back to Quantity</button>
+</a>
+
+<button class="cta proceed" ng-click="alert("Hello")">Finish</button>

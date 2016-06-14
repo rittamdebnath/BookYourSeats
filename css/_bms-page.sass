@@ -1,0 +1,128 @@
+.bms
+  header
+    margin: 40px 0
+    font:
+      size: 44px
+      weight: bold
+    color: $orange
+  .input-card
+    display: block
+    select
+      width: auto
+      font:
+        size: 14px
+        weight: bold
+      border: 1px solid #aaa
+      outline: 0
+      cursor: pointer
+      text-align: left
+      float: left
+      padding: 9px 20px
+      box-shadow: 0 0 0 1px #dfe3e7
+      background: #fff
+      top: 0
+      z-index: 1
+
+  a
+    margin: 0
+    padding: 0
+    font-size: 100%
+    text-decoration: none
+    vertical-align: baseline
+    background: 0 0
+  .cta
+    padding: 10px 15px
+    font:
+      size: 18px
+      weight: bold
+    outline: 0
+    border: 0
+    margin-top: 20px
+
+
+  .proceed
+    color: $orange
+    background: white
+    border: 2px solid $orange
+    +transition(all .3s ease-in-out)
+    &:hover,&:focus
+      color: white
+      background: $orange
+
+  .seatR
+    margin-right: 6px
+    margin-top: 4px
+    font-size: 14px
+    color: #b3b3b3
+
+  .seatI
+    margin: 4px 2px
+    float: left
+    width: 21px
+
+  table
+    a
+      display: inline-block
+      width: 21px
+      height: 21px
+      border-radius: 26%
+      color: #aaa
+      text-align: center
+      font-size: 12px
+      font-weight: bold
+      line-height: 21px
+    .available
+      background: #fff
+      box-shadow: inset 0 0 0 1px $orange
+      cursor: pointer
+      &:hover
+        background: $orange
+        color: white
+    .selected
+      background: $orange
+      color: white
+    .blocked
+      background: #eaeaea
+      box-shadow: 0
+      cursor: default
+      pointer-events: none
+
+  .SRow1
+    display: flex
+    .itemSeat
+      margin-left: 15px
+
+  ._seatQuality
+    width: auto
+
+  .thankyou
+    .center
+      display: block
+      align-items: center
+      justify-content: center
+
+    a
+      display: inline-block
+      width: 21px
+      height: 21px
+      border-radius: 26%
+      color: #aaa
+      text-align: center
+      font-size: 12px
+      font-weight: bold
+      line-height: 21px
+    .available
+      background: #fff
+      box-shadow: inset 0 0 0 1px $orange
+      &:hover
+        background: $orange
+        color: white
+    .selected
+      background: $orange
+      color: white
+    .blocked
+      background: #eaeaea
+      color: #aaa
+      box-shadow: 0
+      border: 0
+      cursor: default
