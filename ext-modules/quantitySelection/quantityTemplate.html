@@ -7,14 +7,14 @@
                 <p>
                     No of Quantity:
                 </p>
-                <select ng-model="selectedVal" ng-change="resetQuantity()" ng-options="i for i in quantities" ></select>
+                <select ng-model="selectedCount" ng-change="seats.setAvailCount(selectedCount)" ng-options="count as count.val for count in quantities" ></select>
             </div>
             <br><br>
             <div class="row switch-card">
                 <p>
                     Desired Seat Quality:
                 </p>
-                <select class="_seatQuality" ng-change="resetQuality(seatQuality)" ng-model="seatQuality" ng-options="i for i in seatQualities" name="" aria-label="Toggle ngHide"></select>
+                <select class="_seatQuality" ng-change="seats.showQuality(seatQuality)" ng-model="seatQuality" ng-options="i for i in seatQualities" name="" aria-label="Toggle ngHide"></select>
                 <div>
                   <!-- {{rows | json}} -->
                 </div>
@@ -22,23 +22,28 @@
         </div>
     </div>
 
-    <div class="col-md-6" ng-show="selectedVal != null && seatQuality != null">
+    <div class="col-md-6"> <!--ng-show="selectedVal != null && seatQuality != null">-->
         <div class="table-responsive">
             <h2 class="text-right">Book Seats</h2>
             <hr>
-            <table class="table" style="width: auto" ng-show="seatQuality == 'premium'">
-                <tbody>
-                    <tr data-ng-repeat="row in rows" class="row">
-                        <h3 ng-hide="seatQuality == 'standard'">Premium</h3>
-                        <td class="SRow1">
-                            <span>{{rowLetter[$index]}}</span>
-                            <div class="itemSeat" data-ng-repeat="item in row">
-                                <a ng-disabled="isDisabled" ng-class="{'selected': item.check == true,'available': item.check == false && item.seat == false, 'blocked': item.seat == true}" ng-click="assignSeats($index,$parent.$index,item.val,item.letter)">{{item.val}}</a>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
+            Seats left: {{seats.availCount.val}}<br/>
+            <!-- map <pre>{{seats.map|json: 2}}</pre> -->
+            <!-- {{seats.map[seatQuality]}} -->
+            <!-- {{ seats.map[seatQuality].seats}} -->
+            <table class="table" style="width: auto">
+                <!-- ng-repeat="(key, rang) in seats.map[seatQuality].seats"> -->
+                <tr ng-repeat="row in seats.map[seatQuality].seats" class="row">
+                    <h3 ng-show="angular.isDefined(seatQuality)">{{seatQuality}}</h3>
+                    <td class="SRow1">
+                        <div class="itemSeat" ng-repeat = "seat in row">
+                            <span ng-show="$first">{{seat.letter}}</span>
+                            <a ng-disabled="states.isDisabled" ng-class="{'active': seat.check, 'available': (!seat.check && !seat.seat),  'blocked': seat.seat}" ng-click="seats.select({rang:seatQuality, row:row, seat: seat}, selectedCount)">{{seat.val}}</a>
+                        </div>
+                    </td>
+                </tr>
             </table>
+            <!-- 
+            duplicate markup
             <table class="table" style="width: auto" ng-show="seatQuality == 'standard'">
                 <tbody>
                     <tr data-ng-repeat="row in rows" class="row">
@@ -51,7 +56,7 @@
                         </td>
                     </tr>
                 </tbody>
-            </table>
+            </table> -->
             <a>
               <button class="cta proceed" ng-click="storeSeat()">Finish</button>
             </a>
