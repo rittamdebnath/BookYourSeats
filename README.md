@@ -2,7 +2,13 @@
 
 It is a angularJs app that is used to book seats for a show or a movie. 
 
+**Installation**
+```
+Download the Repository
 
+1. ``npm install``
+2. ``gulp``
+```
 What the User Can Do (User Cases)?
 
 1. Select and Deselect the Seats with respect to the selectedVal, i.e if the selectedVal = 4 then the user can select only 4 seats in total.
