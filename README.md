@@ -8,6 +8,8 @@ Download the Repository
 
 npm install
 gulp
+
+Open Browser and put this URL: localhost:8080
 ```
 What the User Can Do (User Cases)?
 
