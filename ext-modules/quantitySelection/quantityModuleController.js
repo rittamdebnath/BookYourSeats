@@ -34,8 +34,8 @@ angular.module('quantityModule')
             }
 
             var sessionInfo = seatsManager.bookCheckedSeats();
-
             
+            seatsManager.setAvailCount($scope.selectedCount);
             // $location.path('/thankyou');
             
             // moved validation to top of store seat

@@ -46,40 +46,44 @@ function SeatsLayoutFactory() {
 }
 
 function SeatsFactory($rootScope, $timeout, seatLayoutService) {
-    var seatProps = {
-        id: 0,
-        val: 0,
-        check: false,
-        booked: false
-    };
 
     var seats = {
-        'Premium': {
-            visible: false,
-            //           col0 1 2 3 4  5 
-            // row 0 seat 0   1 2 3 4  5
-            // row 1 seat 6   7 8 9 10 11
-            seats: seatLayoutService.getSeats(65, 5, 10) //createSeats(2, 6) // rows, cols
+            'Premium': {
+                visible: false,
+                //           col0 1 2 3 4  5 
+                // row 0 seat 0   1 2 3 4  5
+                // row 1 seat 6   7 8 9 10 11
+                seats: seatLayoutService.getSeats(65, 5, 10) 
+                //createSeats(2, 6) // rows, cols
+            },
+            'Standard': {
+                visible: false,
+                seats: seatLayoutService.getSeats(70, 5, 10) //createSeats(3, 6)
+            }
         },
-        'Standard': {
-            visible: false,
-            seats: seatLayoutService.getSeats(70, 5, 10) //createSeats(3, 6)
-        }
-    };
+        checkedSeatCount = 0, // keep track of currently selected seats
+        currentSelectionSession = {},
+        DEFAULT_SELECT_SESSION = {
+            checkedSeats: {}, // 4 premium seats and 4 standard seats
+            count: 0, // e.g. 8 seats checked
+            total: 0.0 // e.g. cost for 8 seats
+        };
 
-    var currentSelectionSession = {};
+    init();
 
-    var DEFAULT_SELECT_SESSION = {
-        checkedSeats: {}, // 4 premium seats and 4 standard seats
-        count: 0, // e.g. 8 seats checked
-        total: 0.0 // e.g. cost for 8 seats
-    };
-
-    // reset session
-    currentSelectionSession = angular.copy(DEFAULT_SELECT_SESSION);
-
+    function init() {
+        // reset session
+        currentSelectionSession = angular.copy(DEFAULT_SELECT_SESSION);
+    }
     
+    //@todo old function, not used anymore --> can be removed
     function createSeats(rows, cols) {
+        var seatProps = {
+            id: 0,
+            val: 0,
+            check: false,
+            booked: false
+        };
         var arr = [[]];
         var seatIndex = 0;
         for (var row = 0; row < rows; row++) {
@@ -100,56 +104,18 @@ function SeatsFactory($rootScope, $timeout, seatLayoutService) {
     function checkSelected(newCount) {
         // selected fewer or more than persons in select.
         // --> uncheck all
-        var checkedCount=0, keys = Object.keys(seats);
-        console.log('checkSelected', newCount);
-        for (var rang=0; rang < keys.length; rang++) {
-            var key = keys[rang];
-            var curSeats = seats[key].seats;
-            for (var row=0; row < curSeats.length; row++) {
-                for (var col=0; col < curSeats[row].length; col++) {
-                    if ( curSeats[row][col].check ) {
-                        checkedCount++;
-                    }
-                }
-            }
-            //console.log('new count', newCount, checkedCount);
-            // we can have more or less selections after selection change
-            // --> more inc availCount
-            if (checkedCount === 0) {
-                // nothing selected
-                factory.availCount = angular.copy(newCount);
-            }
-            else if (newCount.val > checkedCount) {
-                //console.log('add delta', newCount, checkedCount)
-                factory.availCount.val = (newCount.val - checkedCount);
-            } else {
-                removeAllCheck();
-            }
+
+        // checkedSeatCount not re-created inc. / dec. as needed
+        if ( checkedSeatCount === 0 ) {
+            // nothing selected
+            factory.availCount = angular.copy(newCount);
         }
-    }
-    
-    function removeCheck(rang) {
-        // later pass user to this function (for now remove all checked)
-        /*var curSeats = seats[rang].seats
-        for (var row=0; row < curSeats.length; row++) {
-            for (var col=0; col < curSeats[row].length; col++) {
-                curSeats[row][col].checked = false;
-            }
-        }*/
-        keys = Object.keys(seats);
-        
-        for (var rang=0; rang < keys.length; rang++) {
-            var key = keys[rang];
-            var curSeats = seats[key].seats;
-            for (var row=0; row < curSeats.length; row++) {
-                for (var col=0; col < curSeats[row].length; col++) {
-                    if ( !curSeats[row][col].booked ) {
-                        // only remove if not booked
-                        curSeats[row][col].check = false;
-                        removeSeatFromSession(key, curSeats[row], col);
-                    }
-                }
-            }
+        else if (newCount.val > checkedSeatCount) {
+            //console.log('add delta', newCount, checkedCount)
+            factory.availCount.val = (newCount.val - checkedSeatCount);
+        } else {
+            removeAllCheck();
+            checkedSeatCount = 0;
         }
     }
     
@@ -167,7 +133,9 @@ function SeatsFactory($rootScope, $timeout, seatLayoutService) {
                 }
             }
         }
+        checkedSeatCount = 0; // reset counter
     }
+
     function storeSeatInSession(rang, row, seatIndex) {
         if ( angular.isUndefined(currentSelectionSession
             .checkedSeats[rang]) ) {
@@ -189,81 +157,92 @@ function SeatsFactory($rootScope, $timeout, seatLayoutService) {
     }
 
     function removeSeatFromSession(rang, row, seatIndex) {
-        console.log('remove', currentSelectionSession, rang);
         if ( currentSelectionSession.checkedSeats[rang] ) {
-            console.log('remove seat', rang, row, seatIndex, currentSelectionSession.checkedSeats); //[rang][seatIndex]);
             delete currentSelectionSession.checkedSeats[rang][seatIndex];
         }
     }
 
     function selectSeats(selection, count) {
-        // todo:
         // check distance to border, keep the rest as clickable
         // selection = {rang, row, seat}
-        console.log(selection);
         var row = selection.row,
-            seat = selection.seat;
+            seat = selection.seat,
+            borderDistance,
+            rest, // rest after border hit
+            lastIndex,
+            lastIndexBookedCheck;
         
         if ( !seat.booked ) {
-            //console.log('availCount', factory.availCount);
+            // clicked seat not already booked
             if ( factory.availCount.val == 0 ) {
-                //console.log('new selection');
+                // reset availCounter --> new selection
                 factory.availCount = angular.copy(count);
-                removeCheck(); //selection.rang);
+                removeAllCheck();
             }
 
-            var borderDistance = row.length - row.indexOf(seat);
-            var lastIndex;
+            lastIndexBookedCheck = row.indexOf(seat) + count.val;
+            // check if there are booked seats between click, border and we're
+            // hitting it (check count.val) 
 
-            // check if there are booked between click and border
-            for(var i=row.indexOf(seat); i < row.length; i++) {
+            if ( lastIndexBookedCheck > row.length)
+                lastIndexBookedCheck = row.length; // limit to row.length
+
+            borderDistance  = row.length - row.indexOf(seat);
+            
+            for(var i=row.indexOf(seat); i < lastIndexBookedCheck; i++) {
                 // e.g. clicked index 2 and 5 is booked
                 // --> borderdistance is 5-2 = 3 --> 2 3 4
-                if(row[i].booked) {
+                if( row[i].booked ) {
+                    // we would hit a booked seat
                     borderDistance = i - row.indexOf(seat); // reduce distance 
                     i = row.length;
                     lastIndex = row.indexOf(seat) + borderDistance;
                 }
             }
 
-            var rest = borderDistance > count.val ? 0:  count.val - borderDistance;
-            console.log('borderdistance', borderDistance, rest)
+
+            rest = borderDistance > count.val ? 0:  
+                count.val - borderDistance;
                 
             if ( factory.availCount.val === count.val) {
                 // first click
                 if ( !lastIndex ) {
                     // no booked seat hit before normal border
-                    lastIndex = rest > 0 ? row.length: row.indexOf(seat) + count.val;
+                    lastIndex = rest > 0 ? row.length: 
+                        row.indexOf(seat) + count.val;
                 }
-                for ( var seatIndex = row.indexOf(seat); seatIndex < lastIndex; seatIndex++) {
+
+                for ( var seatIndex = row.indexOf(seat); 
+                        seatIndex < lastIndex; seatIndex++) {
+                    // if ( !row[seatIndex].check ) {
                     row[seatIndex].check = true;
-
-                    console.log('selection test', selection.rang);
-                    // add seat to session (total calculated at booking)
-
+                    
+                    // add seat to session
                     storeSeatInSession(selection.rang, row, seatIndex);
+
+                    checkedSeatCount++;
+                    // }
                 }
+
                 factory.availCount.val = rest; // update available seats
             } 
             else {
                 // second click dec. availCounter
                 // single change of seats
-                /*if ( factory.availCount.val < 0 ) {
-                    row[row.indexOf(seat)].checked = false; // remove check
-                    factory.availCount.val++;
-                }
-                else {*/
                 if ( !row[row.indexOf(seat)].check ) {
                     // only if not already checked
+                    // @info would be good to remove this if, but counting
+                    //       will break
                     row[row.indexOf(seat)].check = true;
 
                     storeSeatInSession(selection.rang, row, row.indexOf(seat));
 
+                    checkedSeatCount++;
+
                     if ( factory.availCount.val > 0 ) {
                         factory.availCount.val--;
                     }
-                 }
-                //}
+                }
             }
         }
     }
@@ -272,9 +251,10 @@ function SeatsFactory($rootScope, $timeout, seatLayoutService) {
         //@todo add user to the check as reference with an id, 
         //      so we know who booked the seat
 
-        keys = Object.keys(seats);
-        var bookedSession;
+        var keys = Object.keys(seats),
+            bookedSession;
 
+        // change check to booked
         for (var rang=0; rang < keys.length; rang++) {
             var key = keys[rang];
             var curSeats = seats[key].seats;
@@ -283,16 +263,17 @@ function SeatsFactory($rootScope, $timeout, seatLayoutService) {
                     if ( curSeats[row][col].check ) {
                         curSeats[row][col].booked = true; // book
                         curSeats[row][col].check = false; // we can remove check
-                        currentSelectionSession.count++;
                     }
                 }
             }
         }
 
+        currentSelectionSession.count = checkedSeatCount;
+        checkedSeatCount = 0;
         bookedSession = angular.copy(currentSelectionSession);
 
         // reset session
-        angular.extend(currentSelectionSession, DEFAULT_SELECT_SESSION);
+        currentSelectionSession = angular.copy(DEFAULT_SELECT_SESSION);
 
         return bookedSession; // return statistic of session
     }
@@ -301,7 +282,6 @@ function SeatsFactory($rootScope, $timeout, seatLayoutService) {
         map: seats,
         select: selectSeats,
         availCount: {},
-        currentSelectionSession: currentSelectionSession, // just for debugging
         setAvailCount: function(count) {
             checkSelected(count);
         },
@@ -310,8 +290,8 @@ function SeatsFactory($rootScope, $timeout, seatLayoutService) {
         },
         showQuality: function(rang) {
             // rang means seat quality
-            // info if we checked some we can continue checking on other quality
-            console.log(rang);
+            // info if we checked some seats, 
+            // we can continue checking on other quality
             angular.forEach(Object.keys(seats), function(curRang) {
                 seats[rang].visible = (curRang === rang);
             });
@@ -321,21 +301,3 @@ function SeatsFactory($rootScope, $timeout, seatLayoutService) {
     
     return factory
 }
-
-// function MainCtrl(seats) {
-//     var vm = this;
-//     angular.extend(vm, {
-//         seats: seats,
-//         selectionCount: [//[0,1,2,3,4],[
-//         {id: 0, val: 0}, // object for two-way binding
-//         {id: 1, val: 1},
-//         {id: 2, val: 2},
-//         {id: 3, val: 3},
-//         {id: 4, val: 4},
-//         ],
-//         selectedCount: 0
-//     });
-    
-//     vm.selectedCount = vm.selectionCount[2];
-//     seats.setAvailCount(vm.selectedCount);
-// }
