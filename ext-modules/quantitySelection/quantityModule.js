@@ -1,1 +1,1 @@
-angular.module('quantityModule',[]);
+angular.module('quantityModule', []);
