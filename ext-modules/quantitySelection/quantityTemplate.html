@@ -33,11 +33,11 @@
             <table class="table" style="width: auto">
                 <!-- ng-repeat="(key, rang) in seats.map[seatQuality].seats"> -->
                 <tr ng-repeat="row in seats.map[seatQuality].seats" class="row">
-                    <h3 ng-show="angular.isDefined(seatQuality)">{{seatQuality}}</h3>
+                    <h3 ng-if="seatQuality">{{seatQuality}}</h3>
                     <td class="SRow1">
                         <div class="itemSeat" ng-repeat = "seat in row">
                             <span ng-show="$first">{{seat.letter}}</span>
-                            <a ng-disabled="states.isDisabled" ng-class="{'active': seat.check, 'available': (!seat.check && !seat.seat),  'blocked': seat.seat}" ng-click="seats.select({rang:seatQuality, row:row, seat: seat}, selectedCount)">{{seat.val}}</a>
+                            <a ng-class="{'selected': seat.check, 'available': (!seat.check && !seat.seat),  'blocked': seat.booked}" ng-click="seats.select({rang:seatQuality, row:row, seat: seat}, selectedCount)">{{seat.val}}</a>
                         </div>
                     </td>
                 </tr>

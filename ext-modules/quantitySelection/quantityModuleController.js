@@ -3,7 +3,6 @@ angular.module('quantityModule')
 
         var init = function() {
 
-            // $scope.rows = [];
             //getSeats(startLetter,rows,cols);
             $scope.premiumSeats = seatsManager.getSeats('Premium'); //seatLayoutService.getSeats(65, 5, 10);
             $scope.standardSeats = seatsManager.getSeats('Standard');//seatLayoutService.getSeats(70, 5, 10);
@@ -17,41 +16,32 @@ angular.module('quantityModule')
                 {id: 4, val: 4},
             ];
             $scope.seatQualities = ['Premium', 'Standard'];
-            $scope.seatQuality = {};
-            // $scope.letterList = [];
-            $scope.isDisabled = false;
 
-        }
+            // set default start values for select boxes
+            $scope.seatQuality = 'Standard'; //undefined;
+            $scope.selectedCount =  $scope.quantities[1];
 
-        $scope.resetQuantity = function() {
-            $scope.selectedVal = $scope.selectedVal || $scope.storeSelectedVal;
+            // manually trigger setAvailCount
+            seatsManager.setAvailCount($scope.selectedCount);
         }
 
         $scope.storeSeat = function() {
-            var count = 0;
-            angular.forEach($scope.rows, function(v, k) {
-                for (var i = 0; i < v.length; i++) {
-                    if (v[i].check == true) {
-                        v[i].seat = true;
-                        count++;
-                    }
-                }
-            });
-
-            if ($scope.seats.availCount.val) { //$scope.selectedCount.val < 1) {
-                $scope.isDisabled = true;
-            } else {
-                $scope.isDisabled = false;
-            }
-            // $location.path('/thankyou');
+            
             if ($scope.seats.availCount.val != 0) {
-                $window.alert("You haven't selected " + $scope.seats.availCount.val + " seats");
+                $window.alert("You haven't selected " + 
+                    $scope.seats.availCount.val + " seats");
                 return;
-            } else {
-                $window.alert('Thank you for Booking ' + $scope.selectedCount.val + ' seats');
-                $scope.seatQuality = null; 
             }
 
+            var sessionInfo = seatsManager.bookCheckedSeats();
+
+            
+            // $location.path('/thankyou');
+            
+            // moved validation to top of store seat
+            $window.alert('Thank you for Booking ' + sessionInfo.count + ' seats. '+
+                    'Your seats are: ' + JSON.stringify(sessionInfo.checkedSeats));
+                // $scope.seatQuality = null; // keep it active 
         };
 
         init();
