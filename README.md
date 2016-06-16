@@ -1,8 +1,8 @@
 # BookYourSeats
 
-It is a angularJs app that is used to book seats for a show or a movie. 
+It is a angularJs app that is used to book seats for a show or a movie.
 
-## Branch ver1.1 
+## Branch ver1.1
 
 **Installation**
 ```
@@ -28,6 +28,6 @@ What the User Can Do (User Cases)?
 
 1. If the user selects 3 seats and click on the first seat in the first row it should automatically select 2 and 3 on the same row.
 2. If the user Selects 3 seats and clicks on the second last seat in the row then last two seats should be filled and the remaining seat should be filled where ever the user clicks.
-3. If the user selectes 3 seats and click on only last then, only that seat should be filled.
+3. If the user selects 3 seats and click on only last then, only that seat should be filled.
 
 StackOverflow: http://stackoverflow.com/questions/37796699/bookyourseat-automatic-seat-selection-on-click-using-angularjs-gif
