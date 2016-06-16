@@ -133,9 +133,10 @@ ul {
 
 .bms table .blocked {
   background: #eaeaea;
+  color: #aaa;
   box-shadow: 0;
-  cursor: default;
-  pointer-events: none; }
+  border: 0;
+  cursor: default; }
 
 .bms .SRow1 {
   display: flex; }
