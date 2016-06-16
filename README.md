@@ -2,6 +2,8 @@
 
 It is a angularJs app that is used to book seats for a show or a movie. 
 
+## Branch ver1.1 
+
 **Installation**
 ```
 Download the Repository
