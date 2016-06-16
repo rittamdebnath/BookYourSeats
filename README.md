@@ -19,6 +19,8 @@ What the User Can Do (User Cases)?
 
 3. Booked Seats Case: If the check value of a seat is true, then the user should not be able to select or deselect that seat(a.blocked CSS rule is Added for that purpose) since it is already selected by another user(Lets assume).
 
+4. User can select the seats from anyone of the seat Quality i.e. either standard or premium but not both.
+
 
 #### Automatic Seat Selection Cases
 
