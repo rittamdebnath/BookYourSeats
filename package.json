@@ -10,12 +10,12 @@
     "type": "git",
     "url": "git+https://github.com/AWolf81/BookYourSeats.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Rittam Debnath",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/AWolf81/BookYourSeats/issues"
+    "url": "https://github.com/rittamdebnath/BookYourSeats/issues"
   },
-  "homepage": "https://github.com/AWolf81/BookYourSeats#readme",
+  "homepage": "https://github.com/rittamdebnath/BookYourSeats#readme",
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-connect": "^3.2.0",
