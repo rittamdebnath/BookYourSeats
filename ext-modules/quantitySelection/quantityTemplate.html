@@ -42,21 +42,6 @@
                     </td>
                 </tr>
             </table>
-            <!--
-            duplicate markup
-            <table class="table" style="width: auto" ng-show="seatQuality == 'standard'">
-                <tbody>
-                    <tr data-ng-repeat="row in rows" class="row">
-                        <h3 ng-hide="seatQuality == 'premium'">Standard</h3>
-                        <td class="SRow1">
-                            <span>{{rowLetter[$index]}}</span>
-                            <div class="itemSeat" data-ng-repeat="item in row">
-                              <a ng-disabled="isDisabled" ng-class="{'selected': item.check == true,'available': item.check == false && item.seat == false, 'blocked': item.seat == true}" ng-click="assignSeats($index,$parent.$index,item.val,item.letter)">{{item.val}}</a>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table> -->
             <a>
               <button class="cta proceed" ng-click="storeSeat()">Finish</button>
             </a>
