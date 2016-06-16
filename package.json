@@ -8,12 +8,12 @@
   },
    "keywords": [
     "css",
-    "less",
-    "mobile-first",
+    "sass",
     "responsive",
     "front-end",
     "framework",
-    "web"
+    "web",
+    "angularjs"
   ],
   "repository": {
     "type": "git",
