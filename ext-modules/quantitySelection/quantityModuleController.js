@@ -49,11 +49,22 @@ angular.module('quantityModule')
 
             seatsManager.setAvailCount($scope.selectedCount);
 
+                // console.log(JSON.stringify(sessionInfo.checkedSeats));
+                $scope.seatsJSON = [];
+                var checkedJSON = sessionInfo.checkedSeats;
 
-            // moved validation to top of store seat
-            $window.alert('Thank you for Booking ' + sessionInfo.count + ' seats. ' +
-                'Your seats are: ' + JSON.stringify(sessionInfo.checkedSeats));
-            // $scope.seatQuality = null; // keep it active
+                angular.forEach(checkedJSON, function(v, k) {
+                    angular.forEach(v, function(v, k) {
+                        angular.forEach(v, function(v, k) {
+                            $scope.seatsJSON.push(v);
+                        });
+                    });
+                });
+
+                 $scope.seatsJSON = $scope.seatsJSON.join('').match(/[\s\S]{1,2}/g) || [];
+
+                $window.alert('Thank you for Booking ' + sessionInfo.count + ' seats. ' +
+                    'Your seats are: '+ $scope.seatsJSON.join(', '));
         };
 
         init();
