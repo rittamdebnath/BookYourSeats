@@ -1,6 +1,5 @@
 angular.module('quantityModule')
-    .controller('quantityModuleController', ['$scope', '$window', 'seatLayoutService', 'seatsManager', function($scope, $window, seatLayoutService, seatsManager) {
-
+    .controller('quantityModuleController', ['$scope', '$window','seatsManager', function($scope, $window, seatsManager) {
             var init = function() {
                 $scope.premiumSeats = seatsManager.getSeats('Premium');
                 $scope.standardSeats = seatsManager.getSeats('Standard');
@@ -35,7 +34,7 @@ angular.module('quantityModule')
                 }
                 var sessionInfo = seatsManager.bookCheckedSeats();
                 seatsManager.setAvailCount($scope.selectedCount);
-                // console.log(JSON.stringify(sessionInfo.checkedSeats));
+                console.log(sessionInfo.checkedSeats);
                 $scope.seatsJSON = [];
                 var checkedJSON = sessionInfo.checkedSeats;
                 angular.forEach(checkedJSON, function(v, k) {
