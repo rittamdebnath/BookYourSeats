@@ -1,9 +1,8 @@
 angular.module('quantityModule')
-    .factory('seatLayoutService', SeatsLayoutFactory)
     .factory('seatsManager', SeatsFactory);
 
-function SeatsLayoutFactory() {
-    getSeats = function(startLetter, rows, cols) {
+function SeatsFactory($rootScope, $timeout) {
+    drawSeats = function(startLetter, rows, cols) {
         var rowArray = [],
             columnArray = [];
         for (var i = 0, k = startLetter; i < rows; i++, k++) {
@@ -20,21 +19,17 @@ function SeatsLayoutFactory() {
         }
         return rowArray;
     }
-    return {
-        getSeats: getSeats
-    }
-}
 
-function SeatsFactory($rootScope, $timeout, seatLayoutService) {
+
     var seats = {
             'Premium': {
                 visible: false,
-                seats: seatLayoutService.getSeats(65, 5, 10)
+                seats: drawSeats(65, 5, 10)
 
             },
             'Standard': {
                 visible: false,
-                seats: seatLayoutService.getSeats(70, 5, 10)
+                seats: drawSeats(70, 5, 10)
             }
         },
         checkedSeatCount = 0,
@@ -46,10 +41,12 @@ function SeatsFactory($rootScope, $timeout, seatLayoutService) {
         };
 
 
-    init();
     function init() {
-      currentSelectionSession = angular.copy(DEFAULT_SELECT_SESSION);
+        currentSelectionSession = angular.copy(DEFAULT_SELECT_SESSION);
     }
+    init();
+
+
 
     function checkSelected(newCount) {
         if (checkedSeatCount === 0) {
@@ -111,7 +108,6 @@ function SeatsFactory($rootScope, $timeout, seatLayoutService) {
             lastIndexBookedCheck;
 
         if (!seat.booked) {
-
             if (factory.availCount.val == 0) {
                 factory.availCount = angular.copy(count);
                 removeAllCheck();
@@ -168,6 +164,7 @@ function SeatsFactory($rootScope, $timeout, seatLayoutService) {
         for (var rang = 0; rang < keys.length; rang++) {
             var key = keys[rang];
             var curSeats = seats[key].seats;
+            // console.log('Checked Seats '+ seats[key].seats);
             for (var row = 0; row < curSeats.length; row++) {
                 for (var col = 0; col < curSeats[row].length; col++) {
                     if (curSeats[row][col].check) {
@@ -181,11 +178,15 @@ function SeatsFactory($rootScope, $timeout, seatLayoutService) {
         currentSelectionSession.count = checkedSeatCount;
         checkedSeatCount = 0;
         bookedSession = angular.copy(currentSelectionSession);
+        console.log('bookedSession ' + bookedSession);
+
         currentSelectionSession = angular.copy(DEFAULT_SELECT_SESSION);
+        console.log('currentSelectionSession ' + currentSelectionSession);
         return bookedSession;
     }
 
     var factory = {
+        drawSeats: drawSeats,
         map: seats,
         select: selectSeats,
         availCount: {},
