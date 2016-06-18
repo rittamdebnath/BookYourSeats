@@ -4,6 +4,7 @@ angular.module('appRoot', ['quantityModule'])
     $routeProvider
         .when('/quantity', {
             controller: 'quantityModuleController',
+            controllerAs: 'vm',
             templateUrl: 'templates/quantityTemplate.html'
         })
         .otherwise({
