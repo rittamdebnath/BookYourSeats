@@ -81,21 +81,22 @@ function SeatsFactory($rootScope, $timeout) {
         if (angular.isUndefined(currentSelectionSession
                 .checkedSeats[rang])) {
             currentSelectionSession
-                .checkedSeats[rang] = {};
+                .checkedSeats[rang] = [];
         }
 
         var seat = angular.copy(row[seatIndex]);
 
         delete seat['$$hashKey'];
         delete seat['check'];
-        delete seat['booked'];
+        delete seat['booked'];        
 
-        currentSelectionSession.checkedSeats[rang][seatIndex] = seat;
+        currentSelectionSession.checkedSeats[rang].push(seat);
+        // console.log(currentSelectionSession);
     }
 
     function removeSeatFromSession(rang, row, seatIndex) {
         if (currentSelectionSession.checkedSeats[rang]) {
-            delete currentSelectionSession.checkedSeats[rang][seatIndex];
+            delete currentSelectionSession.checkedSeats[rang].pop();
         }
     }
 
@@ -107,13 +108,13 @@ function SeatsFactory($rootScope, $timeout) {
             lastIndex,
             lastIndexBookedCheck;
 
-        if (!seat.booked) {
+        if (!seat.booked && !seat.check) {
             if (factory.availCount.val == 0) {
                 factory.availCount = angular.copy(count);
                 removeAllCheck();
             }
 
-            lastIndexBookedCheck = row.indexOf(seat) + count.val;
+            lastIndexBookedCheck = row.indexOf(seat) + factory.availCount.val;
 
             if (lastIndexBookedCheck > row.length)
                 lastIndexBookedCheck = row.length;
@@ -128,33 +129,26 @@ function SeatsFactory($rootScope, $timeout) {
                 }
             }
 
+            rest = borderDistance > factory.availCount.val ? 0 :
+                factory.availCount.val - borderDistance;
 
-            rest = borderDistance > count.val ? 0 :
-                count.val - borderDistance;
-
-            if (factory.availCount.val === count.val) {
-                if (!lastIndex) {
-                    lastIndex = rest > 0 ? row.length :
-                        row.indexOf(seat) + count.val;
-                }
-
-                for (var seatIndex = row.indexOf(seat); seatIndex < lastIndex; seatIndex++) {
-                    row[seatIndex].check = true;
-                    storeSeatInSession(selection.rang, row, seatIndex);
-                    checkedSeatCount++;
-                }
-                factory.availCount.val = rest;
-            } else {
-
-                if (!row[row.indexOf(seat)].check) {
-                    row[row.indexOf(seat)].check = true;
-                    storeSeatInSession(selection.rang, row, row.indexOf(seat));
-                    checkedSeatCount++;
-                    if (factory.availCount.val > 0) {
-                        factory.availCount.val--;
-                    }
-                }
+            // console.log('Last Index: ' + lastIndex);
+            // console.log('Rest: ' + rest);
+            // console.log('Border Distance: ' + borderDistance);
+            // console.log('Last Index Booked Check: ' + lastIndexBookedCheck);
+            
+            if (!lastIndex) {
+                lastIndex = rest > 0 ? row.length :
+                    row.indexOf(seat) + factory.availCount.val;
             }
+
+            for (var seatIndex = row.indexOf(seat); seatIndex < lastIndex; seatIndex++) {
+                row[seatIndex].check = true;
+                storeSeatInSession(selection.rang, row, seatIndex);
+                checkedSeatCount++;
+            }
+            factory.availCount.val = rest;
+
         }
     }
 
@@ -164,7 +158,9 @@ function SeatsFactory($rootScope, $timeout) {
         for (var rang = 0; rang < keys.length; rang++) {
             var key = keys[rang];
             var curSeats = seats[key].seats;
+
             // console.log('Checked Seats '+ seats[key].seats);
+
             for (var row = 0; row < curSeats.length; row++) {
                 for (var col = 0; col < curSeats[row].length; col++) {
                     if (curSeats[row][col].check) {
@@ -178,10 +174,13 @@ function SeatsFactory($rootScope, $timeout) {
         currentSelectionSession.count = checkedSeatCount;
         checkedSeatCount = 0;
         bookedSession = angular.copy(currentSelectionSession);
-        console.log('bookedSession ' + bookedSession);
+
+        // console.log(bookedSession);
 
         currentSelectionSession = angular.copy(DEFAULT_SELECT_SESSION);
-        console.log('currentSelectionSession ' + currentSelectionSession);
+
+        // console.log(currentSelectionSession);
+        
         return bookedSession;
     }
 
@@ -200,6 +199,8 @@ function SeatsFactory($rootScope, $timeout) {
             angular.forEach(Object.keys(seats), function(curRang) {
                 seats[rang].visible = (curRang === rang);
             });
+            this.availCount.val = this.availCount.id;
+            removeAllCheck();
         },
         bookCheckedSeats: bookCheckedSeats
     };
