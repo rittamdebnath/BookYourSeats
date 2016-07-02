@@ -34,20 +34,19 @@ angular.module('quantityModule')
                 }
                 var sessionInfo = seatsManager.bookCheckedSeats();
                 seatsManager.setAvailCount($scope.selectedCount);
-                console.log(sessionInfo.checkedSeats);
-                $scope.seatsJSON = [];
-                var checkedJSON = sessionInfo.checkedSeats;
-                angular.forEach(checkedJSON, function(v, k) {
-                    angular.forEach(v, function(v, k) {
-                        angular.forEach(v, function(v, k) {
-                            $scope.seatsJSON.push(v);
-                        });
-                    });
+
+                // console.log(sessionInfo.checkedSeats);
+
+                $scope.alertMsg = [];
+                angular.forEach(sessionInfo.checkedSeats, function(v, k) {
+                    for (var i = 0; i < v.length; i++) {
+                        $scope.alertMsg.push(v[i].val + v[i].letter);
+                    }
                 });
-                $scope.seatsJSON = $scope.seatsJSON.join('').match(/[\s\S]{1,2}/g) || [];
-                $window.alert('Thank you for Booking ' + sessionInfo.count + ' seats. ' +
-                'Your seats are: '+ $scope.seatsJSON.join(', '));
-              };
+                
+                $window.alert('Thank you for Booking ' + sessionInfo.count + ' seats. ' + 
+                        'Your seats are: ' + $scope.alertMsg.join(', '));
+            };
 
         init();
     }]);
